@@ -1,3 +1,5 @@
+// in app.js creating an http server
+
 const http=require("http");
 
 const server=http.createServer((req, res)=>{
