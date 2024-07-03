@@ -5,7 +5,8 @@ const addNewUser=async(req,res)=>{
         const {name,email,age,password}=req.body;
         const user=new User({name,email,age,password});
         await user.save();
-        return res.status(201).send(user);
+        const token=user.generateToken();
+        return res.status(201).send({user,token});
     }catch(err){
         console.error(err);
         return res.status(500).send({message:err.message});
@@ -15,9 +16,10 @@ const addNewUser=async(req,res)=>{
 const loginUser=async(req,res)=>{
     try{
         const{email,password}=req.body;
-        const user=await User.findByEmailAndPasswordForAuth(email,password);
+        const user= await User.findByEmailAndPasswordForAuth(email,password);
+        const token=user.generateToken();
         console.info(`user with Email: ${email} successfully logged in.`);
-        return res.status(200).send(user);
+        return res.status(200).send({user,token});
     }
     catch(err){
         console.error(err);
@@ -25,4 +27,16 @@ const loginUser=async(req,res)=>{
     }
 };
 
-module.exports={addNewUser,loginUser};
+const deleteUser=async(req,res)=>{
+    const {user}=req;
+    const userId=user._id;
+    const deleteResult=await User.deleteOne({_id:userId});
+    if(!deleteResult.deletedCount){
+        console.error(`Delete failed! User With this id not found`);
+        return res.status(404).send({message:`Delete failed! User With this id not found`})
+    }
+    console.info(`Delete Success with this id`);
+    return res.status(200).send({message:"delete success!"});
+}
+
+module.exports={addNewUser,loginUser,deleteUser};

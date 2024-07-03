@@ -4,6 +4,7 @@ const userController=require("../controllers/user-controller");
 
 router.post("/login",userController.loginUser);
 router.post("/signup",userController.addNewUser);
+router.delete("/self",userController.deleteUser);
 
 
 module.exports=router;

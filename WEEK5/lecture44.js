@@ -1,7 +1,8 @@
+// in User.js
+
 const {model,Schema} =require ("mongoose");
 const {isEmail} =require ("validator");
 const { encryptPassword, checkPassword } = require("../bcrypt");
-const { generateToken } = require("../jwt");
 
 const UserSchema=new Schema({
     name: {type: String, trim: true, required: true},
@@ -52,11 +53,25 @@ UserSchema.pre("save",async function(next){
     next();
 })
 
-UserSchema.methods.generateToken=function(){
-    const user=this;
-    const token=generateToken({_id:user._id});
-    return token;
-}
-
 const User=model("User",UserSchema);
 module.exports=User;
+
+// in bcrypt.js
+
+const bcrypt=require("bcrypt");
+
+const encryptPassword=async(plainTextPassword)=>{
+    try{
+        return await bcrypt.hash(plainTextPassword,8);
+    }
+    catch(err){
+        console.error(err);
+        throw err;
+    }
+};
+
+const checkPassword=async(plainTextPassword,encryptedPassword)=>{
+    return bcrypt.compare(plainTextPassword,encryptedPassword);
+};
+
+module.exports={ checkPassword,encryptPassword};
