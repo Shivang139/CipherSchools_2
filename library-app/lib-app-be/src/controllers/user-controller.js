@@ -42,6 +42,16 @@ const logoutUser=async(req,res)=>{
         console.error(err);
         return res.status(500).send({message:err.message});
     }
-}
+};
 
-module.exports={addNewUser,loginUser,logoutUser};
+const getAllStudents=async(req,res)=>{
+    try{
+        let studentList = await User.find({type: "STUDENT"});
+        return res.status(200).send(studentList);
+    }catch(err){
+        console.error(err);
+        return res.status(500).send({message:err.message});
+    }
+};
+
+module.exports={addNewUser,loginUser,logoutUser,getAllStudents};

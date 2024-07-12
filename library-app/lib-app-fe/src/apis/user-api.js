@@ -14,3 +14,8 @@ export const logoutUser=async()=>{
     const response=await LibraryApplicationBackend.get("/user/logout");
     return response;
 }
+
+export const getAllStudents= async()=>{
+    const {data:studentList}=await LibraryApplicationBackend.get("/user/get-students");
+    return studentList;
+}
